@@ -1,4 +1,5 @@
 import vinext from "vinext";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { readExecutionProfile } from "./scripts/execution-profile.mjs";
@@ -65,7 +66,11 @@ export default defineConfig(async () => {
     },
     resolve: {
       alias: skipCloudflare
-        ? { "cloudflare:workers": "./work/cloudflare-workers-shim.ts" }
+        ? {
+            "cloudflare:workers": fileURLToPath(
+              new URL("./build/cloudflare-workers-shim.ts", import.meta.url),
+            ),
+          }
         : undefined,
     },
     plugins: [
