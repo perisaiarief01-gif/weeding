@@ -1,0 +1,1 @@
+Taruh file musik undangan di folder ini dengan nama wedding.mp3. Format yang dipakai: MP3.
