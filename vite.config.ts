@@ -13,6 +13,7 @@ const { d1, r2 } = hostingConfig;
 const isVercel =
   process.env.VERCEL === "1" ||
   process.env.NITRO_PRESET === "vercel";
+const skipCloudflare = isVercel || Boolean(process.env.SITES_SKIP_CLOUDFLARE);
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
@@ -53,7 +54,7 @@ export default defineConfig(async () => {
   process.env.MINIFLARE_REGISTRY_PATH ??= ".wrangler/registry";
 
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.
-  const cloudflare = process.env.SITES_SKIP_CLOUDFLARE
+  const cloudflare = skipCloudflare
     ? null
     : (await import("@cloudflare/vite-plugin")).cloudflare;
 
@@ -63,7 +64,7 @@ export default defineConfig(async () => {
       ...(isCodexSeatbeltSandbox ? { watch: { useFsEvents: false, usePolling: true } } : {}),
     },
     resolve: {
-      alias: process.env.SITES_SKIP_CLOUDFLARE
+      alias: skipCloudflare
         ? { "cloudflare:workers": "./work/cloudflare-workers-shim.ts" }
         : undefined,
     },
